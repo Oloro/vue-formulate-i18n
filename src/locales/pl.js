@@ -45,23 +45,33 @@ const localizedValidationMessages = {
    */
   after: function ({ name, args }) {
     if (Array.isArray(args) && args.length) {
-      return `${s(name)} must be after ${args[0]}.`
+      return `${s(name)} musi być późniejsza niż ${args[0]}.`
     }
-    return `${s(name)} must be a later date.`
+    return `${s(name)} musi być późniejszą datą.`
   },
 
   /**
    * The value is not a letter.
    */
-  alpha: function ({ name }) {
-    return `${s(name)} can only contain alphabetical characters.`
+  alpha: function ({ name, args }) {
+    if (Array.isArray(args) && args.length) {
+      if (args[0] === 'latin') return `${s(name)} może zawierać wyłącznie litery bez polskich znaków.`
+    } else if (args[0] === 'default') {
+      return `${s(name)} może zawierać wyłącznie litery.`
+    }
+    return `${s(name)} może zawierać wyłącznie litery.`
   },
 
   /**
    * Rule: checks if the value is alpha numeric
    */
-  alphanumeric: function ({ name }) {
-    return `${s(name)} can only contain letters and numbers.`
+  alphanumeric: function ({ name, args }) {
+    if (Array.isArray(args) && args.length) {
+      if (args[0] === 'latin') return `${s(name)} może zawierać wyłącznie litery bez polskich znaków i liczby.`
+    } else if (args[0] === 'default') {
+      return `${s(name)} może zawierać wyłącznie litery i liczby.`
+    }
+    return `${s(name)} może zawierać wyłącznie litery i liczby.`
   },
 
   /**
@@ -69,9 +79,9 @@ const localizedValidationMessages = {
    */
   before: function ({ name, args }) {
     if (Array.isArray(args) && args.length) {
-      return `${s(name)} must be before ${args[0]}.`
+      return `${s(name)} musi być wcześniejsza niż ${args[0]}.`
     }
-    return `${s(name)} must be an earlier date.`
+    return `${s(name)} musi być wcześniejszą datą.`
   },
 
   /**
@@ -80,9 +90,9 @@ const localizedValidationMessages = {
   between: function ({ name, value, args }) {
     const force = Array.isArray(args) && args[2] ? args[2] : false
     if ((!isNaN(value) && force !== 'length') || force === 'value') {
-      return `${s(name)} must be between ${args[0]} and ${args[1]}.`
+      return `${s(name)} musi zawierać się między ${args[0]} i ${args[1]}.`
     }
-    return `${s(name)} must be between ${args[0]} and ${args[1]} characters long.`
+    return `Długość ${s(name)} nie może być krótsza niż ${args[0]} i dłuższa niż ${args[1]}.`
   },
 
   /**
@@ -97,16 +107,16 @@ const localizedValidationMessages = {
    */
   date: function ({ name, args }) {
     if (Array.isArray(args) && args.length) {
-      return `${s(name)} is not a valid date, please use the format ${args[0]}`
+      return `${s(name)} nie jest prawidłową datą, użyj formatu ${args[0]}`
     }
-    return `${s(name)} is not a valid date.`
+    return `${s(name)} nie jes prawidłową datą.`
   },
 
   /**
    * The default render method for error messages.
    */
   default: function ({ name }) {
-    return `This field isn’t valid.`
+    return `To pole zawiera błąd.`
   },
 
   /**
@@ -114,9 +124,9 @@ const localizedValidationMessages = {
    */
   email: function ({ name, value }) {
     if (!value) {
-      return 'Please enter a valid email address.'
+      return 'Wprowadź adres email.'
     }
-    return `“${value}” is not a valid email address.`
+    return `“${value}” nie jest prawidłowym adresem email.`
   },
 
   /**
@@ -124,9 +134,9 @@ const localizedValidationMessages = {
    */
   endsWith: function ({ name, value }) {
     if (!value) {
-      return `This field doesn’t end with a valid value.`
+      return `To pole nie kończy się prawidłową wartością.`
     }
-    return `“${value}” doesn’t end with a valid value.`
+    return `“${value}” nie kończy się prawidłową wartością.`
   },
 
   /**
@@ -134,72 +144,72 @@ const localizedValidationMessages = {
    */
   in: function ({ name, value }) {
     if (typeof value === 'string' && value) {
-      return `“${s(value)}” is not an allowed ${name}.`
+      return `“${s(value)}” nie jest dopuszczalną wartością ${name}.`
     }
-    return `This is not an allowed ${name}.`
+    return `To nie jest dopuszczalna wartość ${name}.`
   },
 
   /**
    * Value is not a match.
    */
   matches: function ({ name }) {
-    return `${s(name)} is not an allowed value.`
+    return `${s(name)} nie jest dopuszczalną wartością.`
   },
 
   /**
-   * The maximum value allowed.
+   * The maximum allowed value.
    */
   max: function ({ name, value, args }) {
     if (Array.isArray(value)) {
-      return `You may only select ${args[0]} ${name}.`
+      return `Maksymalną ilością do wybrania jest ${args[0]}.`
     }
     const force = Array.isArray(args) && args[1] ? args[1] : false
     if ((!isNaN(value) && force !== 'length') || force === 'value') {
-      return `${s(name)} must be less than or equal to ${args[0]}.`
+      return `Wartość ${name} musi być mniejsza lub równa ${args[0]}.`
     }
-    return `${s(name)} must be less than or equal to ${args[0]} characters long.`
+    return `${s(name)} musi składać się z maksymalnie ${args[0]} znaków.`
   },
 
   /**
    * The (field-level) error message for mime errors.
    */
   mime: function ({ name, args }) {
-    return `${s(name)} must be of the the type: ${args[0] || 'No file formats allowed.'}`
+    return `${s(name)} musi być plikiem: ${args[0] || 'Pliki z rozszerzeniem nie są dopuszczalne.'}`
   },
 
   /**
-   * The maximum value allowed.
+   * The minimum allowed value.
    */
   min: function ({ name, value, args }) {
     if (Array.isArray(value)) {
-      return `You need at least ${args[0]} ${name}.`
+      return `Minimalną ilością do wybrania jest ${args[0]}.`
     }
     const force = Array.isArray(args) && args[1] ? args[1] : false
     if ((!isNaN(value) && force !== 'length') || force === 'value') {
-      return `${s(name)} must be at least ${args[0]}.`
+      return `Wartość ${name} musi być większa lub równa ${args[0]}.`
     }
-    return `${s(name)} must be at least ${args[0]} characters long.`
+    return `${s(name)} musi składać się z minimalnie ${args[0]} znaków.`
   },
 
   /**
    * The field is not an allowed value
    */
   not: function ({ name, value }) {
-    return `“${value}” is not an allowed ${name}.`
+    return `“${value}” nie jest dozwoloną wartością dla ${name}.`
   },
 
   /**
    * The field is not a number
    */
   number: function ({ name }) {
-    return `${s(name)} must be a number.`
+    return `${s(name)} nie jest liczbą.`
   },
 
   /**
    * Required field.
    */
   required: function ({ name }) {
-    return `${s(name)} is required.`
+    return `${s(name)} jest polem wymaganym.`
   },
 
   /**
@@ -207,16 +217,16 @@ const localizedValidationMessages = {
    */
   startsWith: function ({ name, value }) {
     if (!value) {
-      return `This field doesn’t start with a valid value.`
+      return `To pole nie rozpoczyna się prawidłową wartością.`
     }
-    return `“${value}” doesn’t start with a valid value.`
+    return `“${value}” nie rozpoczyna się prawidłową wartością.`
   },
 
   /**
    * Value is not a url.
    */
-  url: function ({ name }) {
-    return `Please include a valid url.`
+  url: function ({ value }) {
+    return `Podana wartość nie jest prawidłowym adresem url.`
   }
 }
 
